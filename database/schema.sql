@@ -8,7 +8,7 @@ CREATE TABLE families (
     block_number VARCHAR(50),
     building VARCHAR(100),
     postal_code VARCHAR(10)
-)
+);
 
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -25,7 +25,7 @@ CREATE TABLE items (
     owner_id INT NOT NULL,
     item_name VARCHAR(100) NOT NULL,
     quantity INT NOT NULL,
-    date_expiry TIMESTAMP,
+quantity
     date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (owner_id) REFERENCES users(id)
-)
+);
