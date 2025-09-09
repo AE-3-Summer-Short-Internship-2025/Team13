@@ -6,9 +6,9 @@
 
 - Ishida Haruka: バックエンド💾
 - Uemura Oura: バックエンド💾
-- Nakada Takamizu: バックエンド💾
+- Nakada Takamizu: フロントエンド🎨
 - Prajeeyachat Zachariah: フロントエンド🎨
-- Yoshida Takahiro: フロントエンド🎨
+- Yoshida Takahiro: バックエンド💾
 
 ---
 
