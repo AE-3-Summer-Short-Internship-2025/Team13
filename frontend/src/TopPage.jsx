@@ -1,0 +1,98 @@
+import React from 'react';
+import { useState } from 'react';
+
+export default function () {
+    const [timeout, setTimeout] = useState(true);
+
+    const fakeData = [
+        {
+            name: "かんぱん",
+            count: 2,
+            date: "2025-7-6"
+        },
+        {
+            name: "鯖缶",
+            count: 3,
+            date: "2025-7-5"
+        }
+    ];
+    return (
+        <>
+
+            <h1 className='text-gray'>今日の伝言板</h1>
+            <h1 className='text-gray'>あなたの備蓄</h1>
+            <div onClick={() => setTimeout(prev => !prev)} style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }} className='text-gray unselectable-text'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <g filter="url(#filter0_iii_1_364)">
+                        <path d="M15.8926 8.96216C15.8926 13.0698 12.5627 16.3997 8.45508 16.3997C4.34746 16.3997 1.01758 13.0698 1.01758 8.96216C1.01758 4.85454 4.34746 1.52466 8.45508 1.52466C12.5627 1.52466 15.8926 4.85454 15.8926 8.96216Z" fill="url(#paint0_linear_1_364)" />
+                    </g>
+                    <g filter="url(#filter1_f_1_364)">
+                        <path d="M3.14258 8.43091C3.14258 8.1375 3.38043 7.89966 3.67383 7.89966H13.2363C13.5297 7.89966 13.7676 8.1375 13.7676 8.43091V9.49341C13.7676 9.78682 13.5297 10.0247 13.2363 10.0247H3.67383C3.38043 10.0247 3.14258 9.78682 3.14258 9.49341V8.43091Z" fill="#FF4D76" />
+                    </g>
+                    <g filter="url(#filter2_i_1_364)">
+                        <path d="M3.14258 8.43091C3.14258 8.1375 3.38043 7.89966 3.67383 7.89966H13.2363C13.5297 7.89966 13.7676 8.1375 13.7676 8.43091V9.49341C13.7676 9.78682 13.5297 10.0247 13.2363 10.0247H3.67383C3.38043 10.0247 3.14258 9.78682 3.14258 9.49341V8.43091Z" fill="#F6EEFF" />
+                    </g>
+                    <defs>
+                        <filter id="filter0_iii_1_364" x="0.805078" y="1.25903" width="15.3531" height="15.3531" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                            <feOffset dx="-0.2125" dy="0.2125" />
+                            <feGaussianBlur stdDeviation="0.132812" />
+                            <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                            <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.466667 0 0 0 0 0.666667 0 0 0 1 0" />
+                            <feBlend mode="normal" in2="shape" result="effect1_innerShadow_1_364" />
+                            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                            <feOffset dx="0.345312" />
+                            <feGaussianBlur stdDeviation="0.132812" />
+                            <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                            <feColorMatrix type="matrix" values="0 0 0 0 0.784314 0 0 0 0 0.160784 0 0 0 0 0.34902 0 0 0 1 0" />
+                            <feBlend mode="normal" in2="effect1_innerShadow_1_364" result="effect2_innerShadow_1_364" />
+                            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                            <feOffset dy="-0.345312" />
+                            <feGaussianBlur stdDeviation="0.132812" />
+                            <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                            <feColorMatrix type="matrix" values="0 0 0 0 0.913725 0 0 0 0 0.121569 0 0 0 0 0.309804 0 0 0 1 0" />
+                            <feBlend mode="normal" in2="effect2_innerShadow_1_364" result="effect3_innerShadow_1_364" />
+                        </filter>
+                        <filter id="filter1_f_1_364" x="2.61133" y="7.36841" width="11.6875" height="3.1875" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                            <feGaussianBlur stdDeviation="0.265625" result="effect1_foregroundBlur_1_364" />
+                        </filter>
+                        <filter id="filter2_i_1_364" x="2.87695" y="7.89966" width="10.8906" height="2.39062" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                            <feOffset dx="-0.265625" dy="0.265625" />
+                            <feGaussianBlur stdDeviation="0.265625" />
+                            <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                            <feColorMatrix type="matrix" values="0 0 0 0 0.905882 0 0 0 0 0.858824 0 0 0 0 0.980392 0 0 0 1 0" />
+                            <feBlend mode="normal" in2="shape" result="effect1_innerShadow_1_364" />
+                        </filter>
+                        <linearGradient id="paint0_linear_1_364" x1="8.45508" y1="2.88599" x2="8.45508" y2="16.3997" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#FE4E8E" />
+                            <stop offset="1" stop-color="#FF4C57" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h3>期限切れ</h3>
+                <p>{fakeData.length}個</p>
+                <svg style={{ transform: `${timeout ? 'rotate(0)' : 'rotate(-90deg)'}`, transitionProperty: 'transform', transitionDuration: '200ms' }} xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#50b4aa" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,93.66-40,40a8,8,0,0,1-11.32,0l-40-40a8,8,0,0,1,11.32-11.32L128,140.69l34.34-34.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+            </div>
+            <div style={{ display: 'flex', gap: '2em', }}>
+                {timeout && fakeData.map(item => {
+                    return (
+                        <div key={item.name} style={{ backgroundColor: 'rgb(211, 77, 77)', color: 'white', borderRadius: '0.5em', padding: '.5em 2em' }}>
+                            <p style={{ textAlign: 'center', fontWeight: 'bold' }}>{item.name}</p>
+                            <div style={{ display: 'flex', gap: '1em' }}>
+                                <p>x{item.count}</p>
+                                <p>{item.date}</p>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </>
+    );
+}
