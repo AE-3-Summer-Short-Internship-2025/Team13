@@ -105,12 +105,12 @@ def check_expire(expiry_date, item_name):
 
 @app.route("/")
 def index():
-    conn = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
-    )
+    # conn = mysql.connector.connect(
+    #     host=os.getenv("DB_HOST"),
+    #     user=os.getenv("DB_USER"),
+    #     password=os.getenv("DB_PASSWORD"),
+    #     database=os.getenv("DB_NAME")
+    # )
     famililys = session.query(Families).all()
     users = session.query(Users).all()
     items = session.query(Items).all()
