@@ -4,6 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta, date
+from flask_migrate import Migrate
 
 # .env 読み込み
 env_path = Path(__file__).parent / ".env"
@@ -20,6 +21,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # SQLAlchemy 初期化
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 # familiesテーブル
@@ -61,6 +63,7 @@ class Items(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     item_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
+    item_url = db.Column(db.String(255))
     date_expiry = db.Column(db.DateTime)
     date_added = db.Column(db.DateTime)
 
