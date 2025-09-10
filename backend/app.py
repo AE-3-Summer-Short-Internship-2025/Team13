@@ -83,7 +83,7 @@ def check_expire(expiry_date, item_name):
 @app.route("/")
 def index():
     items = Items.query.all()
-    return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity} for item in items])
+    return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity,             "item_url": item.smallImageUrls} for item in items])
 
 
 @app.route("/api/items")
@@ -94,7 +94,7 @@ def get_items():
             "id": i.id,
             "name": i.item_name,
             "quantity": i.quantity,
-            "item_url": i.smallImageUrls 
+            "smallImageUrls": i.smallImageUrls 
         } for i in items
     ])
 

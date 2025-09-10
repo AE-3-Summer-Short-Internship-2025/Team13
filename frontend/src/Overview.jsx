@@ -23,7 +23,7 @@ function TopPage() {
         {items.map(item => (
           <li key={item.id}>
           {item.name} ({item.quantity})
-          <img src={item.item_url} alt="商品画像" />
+          <img src={item.smallImageUrlsl} alt="商品画像" />
         </li>
         
         ))}
