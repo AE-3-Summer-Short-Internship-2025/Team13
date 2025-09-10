@@ -78,8 +78,9 @@ def check_expire(expiry_date, item_name):
 # ルーティング
 @app.route("/")
 def index():
-    families = Families.query.all()
-    return jsonify({"families_count": len(families)})
+    items = Items.query.all()
+    return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity} for item in items])
+
 
 
 if __name__ == "__main__":
@@ -88,3 +89,4 @@ if __name__ == "__main__":
         db.create_all()
 
     app.run(host="0.0.0.0", port=5000, debug=True)
+
