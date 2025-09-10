@@ -4,6 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta, date
+from flask_cors import CORS
 from flask_migrate import Migrate
 
 # .env 読み込み
@@ -11,6 +12,7 @@ env_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 app = Flask(__name__)
+CORS(app, origins=['http://localhost:5173'])
 
 # DB接続設定
 app.config["SQLALCHEMY_DATABASE_URI"] = (
@@ -78,16 +80,17 @@ def check_expire(expiry_date, item_name):
         return None
 
 
-
 @app.route("/")
 def index():
     items = Items.query.all()
     return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity} for item in items])
 
+
 @app.route("/api/items")
 def get_items():
     items = Items.query.all()
-    return jsonify([{"id": i.id, "name": i.item_name, "quantity": i.quantity,'date_exprity': i.date_expiry} for i in items])
+    return jsonify([{"id": i.id, "name": i.item_name, "quantity": i.quantity, 'date_expiry': i.date_expiry} for i in items])
+
 
 if __name__ == "__main__":
     # 初回起動時にテーブル作成
@@ -95,4 +98,3 @@ if __name__ == "__main__":
         db.create_all()
 
     app.run(host="0.0.0.0", port=5000, debug=True)
-
