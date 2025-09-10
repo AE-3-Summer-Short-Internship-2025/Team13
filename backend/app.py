@@ -94,7 +94,7 @@ def get_items():
             "id": i.id,
             "name": i.item_name,
             "quantity": i.quantity,
-            "item_url": i.smallImageUrls + str(i.id) + ".jpg" 
+            "item_url": i.smallImageUrls 
         } for i in items
     ])
 
