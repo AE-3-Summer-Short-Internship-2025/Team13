@@ -1,5 +1,5 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MenuContext } from './context/MenuContext';
 import MyPage from './Mypage';
 import TopPage from './TopPage';
@@ -17,9 +17,8 @@ function App() {
   const location = useLocation();
   const { menu, setMenu } = useContext(MenuContext);
   return (
-    <div style={{ position: '', height: '100%' }}>
-      
-      {location.pathname !== '/mypage' && <Link to={'/mypage'}><img src={profile} alt="profile icon" style={{ position: 'fixed', right: '1em' }} width={'50em'} /></Link>}
+    <div style={{height: '100%' }}>
+      {location.pathname !== '/mypage' && <Link to={'/mypage'}><img src={profile} alt="profile icon" style={{ position: 'fixed', right: '1em', zIndex: 10, backgroundColor: 'white', borderRadius: '100px' }} width={'50em'} /></Link>}
       <Routes>
         <Route path='/' element={<TopPage />} />
         <Route path='overview' element={<Overview />} />
