@@ -68,6 +68,7 @@ class Items(db.Model):
     smallImageUrls = db.Column(db.String(255))
     date_expiry = db.Column(db.DateTime)
     date_added = db.Column(db.DateTime)
+    is_grocery = db.Column(db.Boolean, default=False)
 
 
 # 有効期限チェック関数
