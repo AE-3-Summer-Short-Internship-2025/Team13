@@ -118,17 +118,17 @@ def index():
     return jsonify({"status": "ok"})
 
 
-@app.route('/api/users', methods=['GET', 'POST'])
-def users():
-    if request.method == 'GET':
-        # データベースからユーザーを取得するロジックを実装
-        pass
-    elif request.method == 'POST':
-        # データベースに新しいユーザーを作成するロジックを実装
-        pass
+# @app.route('/api/users', methods=['GET', 'POST'])
+# def users():
+#     if request.method == 'GET':
+#         # データベースからユーザーを取得するロジックを実装
+#         pass
+#     elif request.method == 'POST':
+#         # データベースに新しいユーザーを作成するロジックを実装
+#         pass
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 
