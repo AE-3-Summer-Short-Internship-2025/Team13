@@ -1,0 +1,19 @@
+<!-- 検証用 -->
+<!-- base.htmlを継承している。 -->
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<ul>
+    {% for user in users %}
+        <!-- {{ loop.index }} -->
+        {{ user }}
+    {% endfor %}
+    <hr>
+    {% if is_login%}
+        <p>ログイン済みです</p>
+    {% endif %}
+    {% for value in users %}
+    <li> {{ value }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
