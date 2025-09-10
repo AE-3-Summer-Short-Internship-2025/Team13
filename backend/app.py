@@ -65,7 +65,7 @@ class Items(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     item_name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    item_url = db.Column(db.String(255))
+    smallImageUrls = db.Column(db.String(255))
     date_expiry = db.Column(db.DateTime)
     date_added = db.Column(db.DateTime)
 
