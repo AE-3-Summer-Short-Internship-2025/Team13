@@ -75,13 +75,16 @@ def check_expire(expiry_date, item_name):
         return None
 
 
-# ルーティング
+
 @app.route("/")
 def index():
     items = Items.query.all()
     return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity} for item in items])
 
-
+@app.route("/api/items")
+def get_items():
+    items = Items.query.all()
+    return jsonify([{"id": i.id, "name": i.item_name, "quantity": i.quantity,'date_exprity': i.date_expiry} for i in items])
 
 if __name__ == "__main__":
     # 初回起動時にテーブル作成
