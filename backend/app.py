@@ -68,6 +68,7 @@ class Items(db.Model):
     smallImageUrls = db.Column(db.String(255))
     date_expiry = db.Column(db.DateTime)
     date_added = db.Column(db.DateTime)
+    is_grocery = db.Column(db.Boolean, default=False)
 
 
 # 有効期限チェック関数
@@ -83,7 +84,7 @@ def check_expire(expiry_date, item_name):
 @app.route("/")
 def index():
     items = Items.query.all()
-    return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity} for item in items])
+    return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity,             "item_url": item.smallImageUrls} for item in items])
 
 
 @app.route("/api/items")
@@ -94,7 +95,7 @@ def get_items():
             "id": i.id,
             "name": i.item_name,
             "quantity": i.quantity,
-            "item_url": i.smallImageUrls + str(i.id) + ".jpg" 
+            "smallImageUrls": i.smallImageUrls 
         } for i in items
     ])
 

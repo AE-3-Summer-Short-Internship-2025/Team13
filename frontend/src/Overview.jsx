@@ -53,9 +53,10 @@ function TopPage() {
       <ul>
         {items.map(item => (
           <li key={item.id}>
-            {item.name} ({item.quantity})
-            <img src={item.smallImageUrls} alt="商品画像" width={100} />
-          </li>
+          {item.name} ({item.quantity})
+          <img src={item.smallImageUrls} alt="商品画像" />
+        </li>
+        
         ))}
       </ul>
     </div >
