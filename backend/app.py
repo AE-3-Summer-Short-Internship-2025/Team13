@@ -89,7 +89,15 @@ def index():
 @app.route("/api/items")
 def get_items():
     items = Items.query.all()
-    return jsonify([{"id": i.id, "name": i.item_name, "quantity": i.quantity, 'date_expiry': i.date_expiry} for i in items])
+    return jsonify([
+        {
+            "id": i.id,
+            "name": i.item_name,
+            "quantity": i.quantity,
+            "item_url": i.smallImageUrls + str(i.id) + ".jpg" 
+        } for i in items
+    ])
+
 
 
 if __name__ == "__main__":
