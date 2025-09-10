@@ -6,6 +6,9 @@ import os
 from datetime import datetime, timedelta, date
 from flask_cors import CORS
 from flask_migrate import Migrate
+import requests
+import pandas as pd
+import re
 
 # .env 読み込み
 env_path = Path(__file__).parent / ".env"
@@ -98,6 +101,88 @@ def get_items():
             "smallImageUrls": i.smallImageUrls 
         } for i in items
     ])
+    
+@app.route("/api/fetch_and_add_item", methods=["POST"])
+def fetch_and_add_item():
+    data = request.get_json()
+    jan_code = data.get("itemCode")  # 数字だけ（JANコード）
+
+    if not jan_code:
+        return jsonify({"error": "itemCode is required"}), 400
+
+    # 楽天API（キーワード検索）で商品取得
+    REQUEST_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
+    APP_ID = '1009667447566505226'
+    params = {
+        'applicationId': APP_ID,
+        'format': 'json',
+        'keyword': jan_code,
+    }
+
+    try:
+        res = requests.get(REQUEST_URL, params=params)
+        result = res.json()
+
+        if not result.get("Items"):
+            return jsonify({"error": "商品が見つかりません"}), 404
+
+        items = [item['Item'] for item in result['Items']]
+        df = pd.DataFrame(items)
+
+        df['smallImageUrl'] = df['smallImageUrls'].apply(
+            lambda x: ','.join([d['imageUrl'] for d in x]) if isinstance(x, list) else None
+        )
+
+        # def extract_expiry(text):
+        #     if pd.isna(text):
+        #         return None
+        #     patterns = [
+        #         (r"賞味期限\s*[:：]?\s*(\d{4}年\d{1,2}月\d{1,2}日)", 'raw'),
+        #         (r"賞味期限\s*[:：]?\s*(\d{4}年\d{1,2}月)", 'raw'),
+        #         (r"賞味期限\s*(\d+)\s*[年ヶ月日]", 'digit'),
+        #         (r"(\d+)\s*[年ヶ月日]保存", 'digit'),
+        #         (r"保存期間\s*(\d+)\s*[年ヶ月日]", 'digit'),
+        #         (r"保存可能\s*(\d+)\s*[年ヶ月日]", 'digit'),
+        #         (r"長期保存\s*(\d+)\s*[年ヶ月日]?", 'digit'),
+        #         (r"製造日より\s*(\d+)\s*[年ヶ月日]保存可能", 'digit'),
+        #     ]
+        #     for pattern, mode in patterns:
+        #         match = re.search(pattern, text)
+        #         if match:
+        #             return match.group(1) if mode == 'raw' else int(match.group(1))
+        #     return None
+
+        # df['date_expiry'] = df['itemCaption'].apply(extract_expiry)
+
+        # 最初の1件だけ使う
+        item = df.iloc[0]
+        # expiry = item['date_expiry']
+        # if isinstance(expiry, int):
+        #     expiry = datetime.now() + timedelta(days=expiry * 365)
+        # elif isinstance(expiry, str):
+        #     try:
+        #         expiry = pd.to_datetime(expiry)
+        #     except:
+        #         expiry = None
+
+        new_item = Items(
+            owner_id=1,
+            item_name=item['itemName'],
+            quantity=1,
+            smallImageUrls=item['smallImageUrl'],
+            # date_expiry=expiry,
+            date_added=datetime.now(),
+            is_grocery=True
+        )
+
+        db.session.add(new_item)
+        db.session.commit()
+
+        return jsonify({"message": "Item added", "id": new_item.id})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
 
