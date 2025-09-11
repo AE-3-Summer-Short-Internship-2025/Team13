@@ -1,6 +1,7 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import crown from './assets/crown.svg';
 import ranking from './Ranking';
+import cart from './assets/cart.svg';
 
 function Recommend() {
 
@@ -25,8 +26,8 @@ function Recommend() {
     return (
     <>
         <header class="app-header">
-            <div class="search-container">
-                <input type="search" class="search-box" placeholder="キーワードを検索"></input>
+            <div class="search-container" style={{display: 'flex', justifyContent: 'center'}}>
+                <input type="search" class="search-box" style={{width: '200px'}}></input>
                 <i class="search-icon">🔍</i>
             </div>
         </header>
