@@ -16,6 +16,7 @@ from typing import Optional, Union
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 
+
 def register_mypage_routes(app, Families, Users):
     # 統一エラーレスポンス
     def error_response(
