@@ -6,7 +6,7 @@ import time
 APP_ID = '1088027222225008171' 
 # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-# ご指定の通り、20220601バージョンを使用
+#20220601バージョンを使用
 SEARCH_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
 
 SEARCH_KEYWORD = '防災'
@@ -63,9 +63,7 @@ if __name__ == "__main__":
     # 表示したいリストの種類を定義
     lists_to_show = {
         f"【{SEARCH_KEYWORD}】売れ筋商品 TOP10": "standard",
-        # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 【修正点】 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
         f"【{SEARCH_KEYWORD}】新着商品（更新日時順） TOP10": "-updateTimestamp",
-        # ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 【修正点】 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
         f"【{SEARCH_KEYWORD}】評価順商品 TOP10": "-reviewAverage",
         f"【{SEARCH_KEYWORD}】価格が安い順 TOP10": "+itemPrice"
     }
@@ -78,7 +76,6 @@ if __name__ == "__main__":
         if df is not None:
             df.index = df.index + 1
             
-            # 「評価点」カラムが不要なリストを修正
             if sort_param in ["-updateTimestamp", "+itemPrice"] and "評価点" in df.columns:
                 print(df.drop(columns=['評価点']).to_string())
             else:
