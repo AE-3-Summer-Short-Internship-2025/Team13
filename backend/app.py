@@ -103,25 +103,24 @@ def get_items():
         } for i in items
     ])
     
-@app.route("/api/fetch_and_add_item", methods=['GET', 'POST'])
+@app.route("/api/fetch_and_add_item", methods=['POST'])
 def fetch_and_add_item():
-    if request.method == 'GET':
-        return jsonify({"message": "GETで呼ばれました"})
-    elif request.method == 'POST':
-        data = request.json
-        # 登録処理
-        return jsonify({"message": "POSTで登録しました", "data": data})
-
-    # 楽天API（キーワード検索）で商品取得
-    REQUEST_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
-    APP_ID = '1009667447566505226'
-    params = {
-        'applicationId': APP_ID,
-        'format': 'json',
-        'keyword': 'barcodeData'
-    }
-
     try:
+        # フロントから item_code を受け取る
+        data = request.get_json()
+        item_code = data.get("item_code")
+        if not item_code:
+            return jsonify({"error": "item_code is required"}), 400
+
+        # 楽天API（キーワード検索）で商品取得
+        REQUEST_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
+        APP_ID = '1009667447566505226'
+        params = {
+            'applicationId': APP_ID,
+            'format': 'json',
+            'keyword': item_code
+        }
+
         res = requests.get(REQUEST_URL, params=params)
         result = res.json()
 
