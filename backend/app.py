@@ -134,6 +134,7 @@ def fetch_and_add_item():
             # 'keyword': item_code
             # 'keyword': item_code
             'keyword': 10000953
+            # 'keyword': f'JAN {item_code'
         }
 
         res = requests.get(REQUEST_URL, params=params)
