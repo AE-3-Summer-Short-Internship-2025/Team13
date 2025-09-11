@@ -163,7 +163,7 @@ export default function RegisterPage() {
             <img src={editMemo ? save : edit} alt="edit and save logo" style={{ justifySelf: 'end' }} onClick={() => setEditMemo(prev => !prev)} />
           </div>
           <div style={{paddingTop: '1em' }}>
-            <button onClick={submit} style={{ backgroundColor: '#50B4AA', border: 'none', color: 'white', fontSize: '2em', fontFamily: 'Zen Maru Gothic', borderRadius: '.25em' }}>確認</button>
+            <button type="button" onClick={submit} style={{ backgroundColor: '#50B4AA', border: 'none', color: 'white', fontSize: '2em', fontFamily: 'Zen Maru Gothic', borderRadius: '.25em' }}>確認</button>
           </div>
         </>}
       {isCameraOn && (

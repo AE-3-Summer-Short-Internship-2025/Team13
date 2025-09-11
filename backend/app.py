@@ -117,8 +117,7 @@ def fetch_and_add_item():
     params = {
         'applicationId': APP_ID,
         'format': 'json',
-        'keyword': jan_code
-        # 'keyword': 10000953
+        'keyword': f'JAN {jan_code}'
     }
 
     try:
