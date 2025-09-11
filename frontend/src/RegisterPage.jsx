@@ -162,9 +162,8 @@ export default function RegisterPage() {
             {editMemo && <input type="text" value={data.note} name='note' onChange={handleChange} style={{ borderRadius: '100px', border: 'none', padding: '.5em' }} />}
             <img src={editMemo ? save : edit} alt="edit and save logo" style={{ justifySelf: 'end' }} onClick={() => setEditMemo(prev => !prev)} />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '1em' }}>
-
-            <button onClick={submit} style={{ backgroundColor: '#50B4AA', border: 'none', color: 'white', fontSize: '2em', fontFamily: 'Zen Maru Gothic', borderRadius: '.25em' }}>確認</button>
+          <div style={{paddingTop: '1em' }}>
+            <button type="button" onClick={submit} style={{ backgroundColor: '#50B4AA', border: 'none', color: 'white', fontSize: '2em', fontFamily: 'Zen Maru Gothic', borderRadius: '.25em' }}>確認</button>
           </div>
         </>}
       {isCameraOn && (

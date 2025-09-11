@@ -12,13 +12,14 @@ import home from './assets/home.svg';
 import calendar from './assets/calendar.svg';
 import cart from './assets/cart.svg';
 import profile from './assets/profile.svg';
+import crown from './assets/crown.svg';
 
 
 function App() {
   const location = useLocation();
   const { menu, setMenu } = useContext(MenuContext);
   return (
-    <div style={{height: '100%' }}>
+    <div style={{ height: '100%' }}>
       {location.pathname !== '/mypage' && <Link to={'/mypage'}><img src={profile} alt="profile icon" style={{ position: 'fixed', right: '1em', zIndex: 10, backgroundColor: 'white', borderRadius: '100px' }} width={'50em'} /></Link>}
       <Routes>
         <Route path='/' element={<TopPage />} />
@@ -47,6 +48,9 @@ function App() {
         </Link>
         <Link to={'/recommend'}>
           <img src={cart} alt="cart icon" />
+        </Link>
+        <Link to={'/ranking'}>
+          <img src={crown} alt="crown icon" />
         </Link>
       </div>
       <div onClick={() => setMenu(prev => !prev)} style={{ backgroundColor: '#50b4aa', position: 'fixed', bottom: 0, right: 0, margin: '1em', borderRadius: '100px', width: '4em', height: '4em' }}>

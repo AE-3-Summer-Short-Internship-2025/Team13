@@ -1,20 +1,21 @@
 import requests
-import pandas as pd
+import json
 import time
 
 # ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 
-
+# 検索キーワード
 SEARCH_KEYWORD = '防災'
 
 def fetch_rakuten_products(keyword, sort_key):
     """
-    指定されたキーワードとソート順で楽天の商品を検索し、DataFrameとして返す関数
+    指定されたキーワードとソート順で楽天の商品を検索し、辞書のリストとして返す関数
     """
+    # 自身の楽天アプリIDに書き換えてください
     APP_ID = '1088027222225008171' 
 # ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-    #20220601バージョンを使用
+    # 20220601バージョンを使用
     SEARCH_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
     params = {
         'applicationId': APP_ID,
@@ -25,33 +26,32 @@ def fetch_rakuten_products(keyword, sort_key):
     }
     try:
         res = requests.get(SEARCH_URL, params=params)
-        res.raise_for_status()
+        res.raise_for_status() # HTTPエラーが発生した際に例外を発生させる
         result = res.json()
         
         if not result.get('Items'):
             print(f"「{keyword}」に関する商品が見つかりませんでした。(ソート: {sort_key})")
             return None
             
-        items_data = [item['Item'] for item in result['Items']]
-        df = pd.DataFrame(items_data)
-        
-        columns_to_keep = {
-            'itemName': '商品名', 
-            'itemPrice': '価格', 
-            'shopName': 'ショップ名', 
-            'reviewAverage': '評価点'
-        }
-        
-        exist_cols = [col for col in columns_to_keep.keys() if col in df.columns]
-        return df[exist_cols].rename(columns=columns_to_keep)
+        # pandasを使わずに必要な情報だけを抽出し、日本語キーを持つ辞書のリストを作成
+        items_data = []
+        for item in result['Items']:
+            item_info = item['Item']
+            items_data.append({
+                '商品名': item_info.get('itemName'), 
+                '価格': item_info.get('itemPrice'), 
+                'ショップ名': item_info.get('shopName'), 
+                '評価点': item_info.get('reviewAverage')
+            })
+        return items_data
 
     except requests.exceptions.RequestException as e:
         # エラーの詳細（JSONレスポンス）を表示するように改良
         error_details = ""
         try:
             error_details = e.response.json()
-        except:
-            pass
+        except (ValueError, AttributeError):
+            pass # JSONデコードに失敗した場合は何もしない
         print(f"通信エラーが発生しました (ソート: {sort_key}): {e}")
         if error_details:
             print(f"サーバーからのエラー詳細: {error_details}")
@@ -69,19 +69,31 @@ if __name__ == "__main__":
         f"【{SEARCH_KEYWORD}】価格が安い順 TOP10": "+itemPrice"
     }
     
+    # 最終的なJSON出力を格納するための辞書
+    final_output = {}
+
     for title, sort_param in lists_to_show.items():
-        print(f"--- {title} ---")
+        print(f"--- {title} を取得中 ---")
         
-        df = fetch_rakuten_products(keyword=SEARCH_KEYWORD, sort_key=sort_param)
+        products = fetch_rakuten_products(keyword=SEARCH_KEYWORD, sort_key=sort_param)
             
-        if df is not None:
-            df.index = df.index + 1
+        if products is not None:
+            # 新着順と価格順の場合は「評価点」キーを削除
+            if sort_param in ["-updateTimestamp", "+itemPrice"]:
+                for p in products:
+                    if '評価点' in p:
+                        del p['評価点']
             
-            if sort_param in ["-updateTimestamp", "+itemPrice"] and "評価点" in df.columns:
-                print(df.drop(columns=['評価点']).to_string())
-            else:
-                print(df.to_string())
+            # 最終出力用の辞書に結果を格納
+            final_output[title] = products
+        else:
+            final_output[title] = [] # 商品が取得できなかった場合は空のリストを格納
         
-        print("\n" + "="*60 + "\n")
-        
+        # 楽天APIへの負荷を考慮し、1秒間待機
         time.sleep(1)
+
+    # 全てのリストを取得した後、整形されたJSON形式で標準出力に表示
+    print("\n" + "="*60)
+    print("すべての結果をJSON形式で出力します。")
+    print("="*60 + "\n")
+    print(json.dumps(final_output, indent=2, ensure_ascii=False))
