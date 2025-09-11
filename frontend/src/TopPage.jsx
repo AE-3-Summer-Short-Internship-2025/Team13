@@ -67,6 +67,7 @@ export default function () {
                 <h1 className='text-gray'>あなたの備蓄</h1>
                 <h2 className='text-gray' style={{ backgroundColor: '#D9D9D9', padding: '.5em 1em', borderRadius: '1em' }}>{survivalDate}日間持つ</h2>
             </div>
+
             <div onClick={() => setTimeout(prev => !prev)} style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }} className='text-gray unselectable-text'>
                 <img src={stopSign} alt="stop sign emoji" />
                 <h3>期限切れ</h3>
@@ -76,6 +77,7 @@ export default function () {
             <div style={{ display: 'flex', gap: '2em', overflowX: 'auto' }}>
                 {timeoutItems.length > 0 && <ItemList condition={timeout} items={timeoutItems} bg={'#d34d4d'} />}
             </div>
+
             <div onClick={() => setOneWeek(prev => !prev)} style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }} className='text-gray unselectable-text'>
                 <img src={warning} alt="warning sign" />
                 <h3>あと一週間</h3>
