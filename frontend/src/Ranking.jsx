@@ -45,80 +45,63 @@ function Ranking() {
                 <main class="main-content">
                     <h1 class="page-title">人気な商品</h1>
 
-                    <section class="ranking-category">
-                        <h2 class="category-title">総合</h2>
-                        <div class="ranking-list-container" style={{ display: 'flex' }}>
-                            <div class="ranking-item rank-1">
-                                <div class="item-circle">
-                                    <span class="crown-icon">👑</span>
-                                    <span class="rank-number">1位</span>
+            <section class="ranking-category">
+                <h2 class="category-title">売れ筋</h2>
+                    <div style={{display: 'flex'}}>
+                    {sold_sortData.map(sold => (
+                        <div key={sold.rank} className="overall" style={{width:'100px'}}>
+                                <div style={{borderRadius:'50em', border: 'solid .2em black', width:'80px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center',}}>
+                                    <span>{sold.goods_name || sold.foods_name}</span>
                                 </div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
-                            <div class="ranking-item rank-2">
-                                <div class="item-circle">
-                                    <span class="rank-number">2位</span>
-                                </div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
-                            <div class="ranking-item rank-3">
-                                <div class="item-circle">
-                                    <span class="rank-number">3位</span>
-                                </div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
+                            <div className="item-card add-item-card"><span>+</span></div>
+                            <p>{sold.rank}位</p>
                         </div>
-                    </section>
+                    ))}
+                    </div>
+            </section>
 
-                    <section class="ranking-category">
-                        <h2 class="category-title">新着</h2>
-                        <div style={{ display: 'flex' }}>
-                            {new_sortData.map(latest => (
-                                <div key={latest.rank} className="overall" style={{ width: '80px' }}>
-                                    <div style={{ borderRadius: '50em', border: 'solid .2em black' }}><span>{latest.goods_name || latest.foods_name}</span>
-                                        <div className="item-card add-item-card"><span>+</span></div>
-                                        <p>{latest.rank}位</p>
-                                    </div>
+            <section class="ranking-category">
+                <h2 class="category-title">新着</h2>
+                    <div style={{display: 'flex'}}>
+                    {new_sortData.map(latest => (
+                        <div key={latest.rank} className="overall" style={{width:'80px'}}>
+                            <div style={{borderRadius:'50em', border: 'solid .2em black'}}><span>{latest.goods_name || latest.foods_name}</span></div>
+                            <div className="item-card add-item-card"><span>+</span></div>
+                            <p>{latest.rank}位</p>
+                        </div>
+                    ))}
+                    </div>
+            </section>
+
+            <section class="ranking-category">
+                <h2 class="category-title">評価順</h2>
+                    <div style={{display: 'flex'}}>
+                    {good_sortData.map(good => (
+                        <div key={good.rank} className="overall" style={{width:'100px'}}>
+                                <div style={{borderRadius:'50em', border: 'solid .2em black', width:'80px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center',}}>
+                                    <span>{good.goods_name || good.foods_name}</span>
                                 </div>
-                            ))}
+                            <div className="item-card add-item-card"><span>+</span></div>
+                            <p>{good.rank}位</p>
                         </div>
-                    </section>
+                    ))}
+                    </div>
+            </section>
 
-                    <section class="ranking-category">
-                        <h2 class="category-title">評価順</h2>
-                        <div class="ranking-list-container">
-                            <div class="ranking-item rank-1">
-                                <div class="item-circle"><span class="crown-icon">👑</span><span class="rank-number">1位</span></div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
-                            <div class="ranking-item rank-2">
-                                <div class="item-circle"><span class="rank-number">2位</span></div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
-                            <div class="ranking-item rank-3">
-                                <div class="item-circle"><span class="rank-number">3位</span></div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
+            <section class="ranking-category">
+                <h2 class="category-title">評価順</h2>
+                    <div style={{display: 'flex'}}>
+                    {cheap_sortData.map(cheap => (
+                        <div key={cheap.rank} className="overall" style={{width:'100px'}}>
+                                <div style={{borderRadius:'50em', border: 'solid .2em black', width:'80px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center',}}>
+                                    <span>{cheap.goods_name || cheap.foods_name}</span>
+                                </div>
+                            <div className="item-card add-item-card"><span>+</span></div>
+                            <p>{cheap.rank}位</p>
                         </div>
-                    </section>
-
-                    <section class="ranking-category">
-                        <h2 class="category-title">売れ筋</h2>
-                        <div class="ranking-list-container">
-                            <div class="ranking-item rank-1">
-                                <div class="item-circle"><span class="crown-icon">👑</span><span class="rank-number">1位</span></div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
-                            <div class="ranking-item rank-2">
-                                <div class="item-circle"><span class="rank-number">2位</span></div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
-                            <div class="ranking-item rank-3">
-                                <div class="item-circle"><span class="rank-number">3位</span></div>
-                                <div class="item-name-placeholder"></div>
-                            </div>
-                        </div>
-                    </section>
+                    ))}
+                    </div>
+            </section>
 
                 </main>
             </div>
