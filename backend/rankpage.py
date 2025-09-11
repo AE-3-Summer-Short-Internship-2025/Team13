@@ -3,11 +3,7 @@ import pandas as pd
 import time
 
 # ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-APP_ID = '1088027222225008171' 
-# ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-#20220601バージョンを使用
-SEARCH_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
 
 SEARCH_KEYWORD = '防災'
 
@@ -15,6 +11,11 @@ def fetch_rakuten_products(keyword, sort_key):
     """
     指定されたキーワードとソート順で楽天の商品を検索し、DataFrameとして返す関数
     """
+    APP_ID = '1088027222225008171' 
+# ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+    #20220601バージョンを使用
+    SEARCH_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
     params = {
         'applicationId': APP_ID,
         'format': 'json',
