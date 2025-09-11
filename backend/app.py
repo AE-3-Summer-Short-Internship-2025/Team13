@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session, make_response
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 from dotenv import load_dotenv
@@ -8,10 +8,12 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 import requests
 import pandas as pd
-import re
-from marshmallow import Schema, fields, ValidationError
+from marshmallow import Schema, fields
 from sqlalchemy import text
-# from rankpage import fetch_rakuten_products
+from sqlalchemy.exc import SQLAlchemyError
+from typing import Optional, Union
+import json
+import time
 
 # .env 読み込み
 env_path = Path(__file__).parent / ".env"
@@ -30,6 +32,22 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # SQLAlchemy 初期化
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+
+def create_response(
+    data: Optional[dict] = None,
+    message: Optional[str] = None,
+    error: Optional[Union[str, dict]] = None,
+    status_code: int = 200
+):
+    payload = {}
+    if message is not None:
+        payload["message"] = message
+    if data is not None:
+        payload["data"] = data
+    if error is not None:
+        payload["error"] = error if isinstance(error, dict) else {"message": str(error)}
+    return jsonify(payload), status_code
 
 
 # familiesテーブル
@@ -77,7 +95,7 @@ class Items(db.Model):
     is_grocery = db.Column(db.Boolean, default=False)
 
 
-# 有効期限チェック関数
+# 有効期限チェック関数（未使用のためそのまま温存）
 def check_expire(expiry_date, item_name):
     if expiry_date < date.today():
         return f"{item_name} は期限切れです"
@@ -97,8 +115,7 @@ def db_check():
 
 
 class ItemSchema(Schema):
-    item_code = fields.Str(
-        required=True, validate=lambda x: len(x.strip()) > 0)
+    item_code = fields.Str(required=True, validate=lambda x: len(x.strip()) > 0)
 
 
 @app.route("/api/items")
@@ -115,7 +132,7 @@ def get_items():
             } for i in items
         ])
     except Exception as e:
-        app.logger.error(f"Error fetching items: {str(e)}")
+        app.logger.exception("Error fetching items")
         return jsonify({"error": "データの取得に失敗しました"}), 500
 
 
@@ -123,7 +140,7 @@ def get_items():
 def fetch_and_add_item():
     try:
         # フロントから item_code を受け取る
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         item_code = data.get("item_code")
         if not item_code:
             return jsonify({"error": "item_code is required"}), 400
@@ -137,7 +154,8 @@ def fetch_and_add_item():
             'keyword': f'JAN {item_code}'
         }
 
-        res = requests.get(REQUEST_URL, params=params)
+        res = requests.get(REQUEST_URL, params=params, timeout=10)
+        res.raise_for_status()
         result = res.json()
 
         if not result.get("Items"):
@@ -148,54 +166,23 @@ def fetch_and_add_item():
 
         # 画像URLをカンマ区切りの文字列に変換
         df['smallImageUrl'] = df['smallImageUrls'].apply(
-            lambda x: ','.join([d['imageUrl']
-                               for d in x]) if isinstance(x, list) else None
+            lambda x: ','.join([d.get('imageUrl', '') for d in x]) if isinstance(x, list) else None
         )
-
-        # def extract_expiry(text):
-        #     if pd.isna(text):
-        #         return None
-        #     patterns = [
-        #         (r"賞味期限\s*[:：]?\s*(\d{4}年\d{1,2}月\d{1,2}日)", 'raw'),
-        #         (r"賞味期限\s*[:：]?\s*(\d{4}年\d{1,2}月)", 'raw'),
-        #         (r"賞味期限\s*(\d+)\s*[年ヶ月日]", 'digit'),
-        #         (r"(\d+)\s*[年ヶ月日]保存", 'digit'),
-        #         (r"保存期間\s*(\d+)\s*[年ヶ月日]", 'digit'),
-        #         (r"保存可能\s*(\d+)\s*[年ヶ月日]", 'digit'),
-        #         (r"長期保存\s*(\d+)\s*[年ヶ月日]?", 'digit'),
-        #         (r"製造日より\s*(\d+)\s*[年ヶ月日]保存可能", 'digit'),
-        #     ]
-        #     for pattern, mode in patterns:
-        #         match = re.search(pattern, text)
-        #         if match:
-        #             return match.group(1) if mode == 'raw' else int(match.group(1))
-        #     return None
-
-        # df['date_expiry'] = df['itemCaption'].apply(extract_expiry)
 
         # 最初の1件だけ使う
         item = df.iloc[0]
-        # expiry = item['date_expiry']
-        # if isinstance(expiry, int):
-        #     expiry = datetime.now() + timedelta(days=expiry * 365)
-        # elif isinstance(expiry, str):
-        #     try:
-        #         expiry = pd.to_datetime(expiry)
-        #     except:
-        #         expiry = None
 
         # DBに追加
-        # トランザクション処理の改善
         with db.session.begin():
+            small_img = item['smallImageUrl'] if pd.notna(item['smallImageUrl']) else ''
             new_item = Items(
-                item_name=item['itemName'][:100],  # 長さ制限
+                item_name=str(item['itemName'])[:100],        # 長さ制限
                 quantity=1,
-                smallImageUrls=item['smallImageUrl'][:255],  # 長さ制限
+                smallImageUrls=str(small_img)[:255],          # 長さ制限 + Noneガード
                 date_added=datetime.now(),
                 is_grocery=True
             )
             db.session.add(new_item)
-            # commitは自動的に行われる
 
         return create_response(
             data={"id": new_item.id},
@@ -203,45 +190,202 @@ def fetch_and_add_item():
         )
 
     except requests.RequestException as e:
-        app.logger.error(f"楽天API Error: {str(e)}")
+        app.logger.exception("楽天API Error")
         return create_response(error="商品情報の取得に失敗しました", status_code=500)
     except Exception as e:
-        app.logger.error(f"Database Error: {str(e)}")
+        app.logger.exception("Database Error")
         return create_response(error="データベースエラーが発生しました", status_code=500)
 
-# @app.route("/api/ranking", methods=["POST"])
-# def get_ranking():
-#     data = request.get_json()
-#     keyword = data.get("keyword")
-#     sort_key = data.get("sort")
 
-#     if not keyword or not sort_key:
-#         return jsonify({"error": "キーワードとソート順が必要です"}), 400
+# ランキングページの処理
+# ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 
-#     df = fetch_rakuten_products(keyword, sort_key)
+# 検索キーワード
+SEARCH_KEYWORD = '防災'
 
-#     if df is None or df.empty:
-#         return jsonify({"error": "商品が見つかりませんでした"}), 404
+def fetch_rakuten_products(keyword, sort_key):
+    """
+    指定されたキーワードとソート順で楽天の商品を検索し、辞書のリストとして返す関数
+    """
+    # 自身の楽天アプリIDに書き換えてください
+    APP_ID = '1088027222225008171'
+    # 20220601バージョンを使用
+    SEARCH_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
+    params = {
+        'applicationId': APP_ID,
+        'format': 'json',
+        'keyword': keyword,
+        'sort': sort_key,
+        'hits': 10
+    }
+    try:
+        res = requests.get(SEARCH_URL, params=params, timeout=10)
+        res.raise_for_status()  # HTTPエラーが発生した際に例外を発生させる
+        result = res.json()
 
-#     # DataFrameをJSON形式に変換
-#     result = df.to_dict(orient="records")
-#     return jsonify(result)
+        if not result.get('Items'):
+            print(f"「{keyword}」に関する商品が見つかりませんでした。(ソート: {sort_key})")
+            return None
+
+        # pandasを使わずに必要な情報だけを抽出し、日本語キーを持つ辞書のリストを作成
+        items_data = []
+        for item in result['Items']:
+            item_info = item['Item']
+            items_data.append({
+                '商品名': item_info.get('itemName'),
+                '価格': item_info.get('itemPrice'),
+                'ショップ名': item_info.get('shopName'),
+                '評価点': item_info.get('reviewAverage')
+            })
+        return items_data
+
+    except requests.exceptions.RequestException as e:
+        # エラーの詳細（JSONレスポンス）を表示するように改良
+        error_details = ""
+        try:
+            error_details = e.response.json()  # type: ignore[attr-defined]
+        except (ValueError, AttributeError):
+            pass  # JSONデコードに失敗した場合は何もしない
+        print(f"通信エラーが発生しました (ソート: {sort_key}): {e}")
+        if error_details:
+            print(f"サーバーからのエラー詳細: {error_details}")
+        return None
 
 
-def create_response(data=None, message=None, error=None, status_code=200):
-    response = {}
-    if data is not None:
-        response['data'] = data
-    if message:
-        response['message'] = message
-    if error:
-        response['error'] = error
-    return jsonify(response), status_code
+def run_ranking_demo():
+    """起動時の毎回実行を避けるため、環境変数 RUN_RAKUTEN_DEMO=1 のときだけ実行"""
+    print(f"キーワード「{SEARCH_KEYWORD}」の各種TOP10リストを取得します...\n")
 
-# 使用例
+    # 表示したいリストの種類を定義
+    lists_to_show = {
+        f"【{SEARCH_KEYWORD}】売れ筋商品 TOP10": "standard",
+        f"【{SEARCH_KEYWORD}】新着商品（更新日時順） TOP10": "-updateTimestamp",
+        f"【{SEARCH_KEYWORD}】評価順商品 TOP10": "-reviewAverage",
+        f"【{SEARCH_KEYWORD}】価格が安い順 TOP10": "+itemPrice"
+    }
 
+    # 最終的なJSON出力を格納するための辞書
+    final_output = {}
+
+    for title, sort_param in lists_to_show.items():
+        print(f"--- {title} を取得中 ---")
+
+        products = fetch_rakuten_products(keyword=SEARCH_KEYWORD, sort_key=sort_param)
+
+        if products is not None:
+            # 新着順と価格順の場合は「評価点」キーを削除
+            if sort_param in ["-updateTimestamp", "+itemPrice"]:
+                for p in products:
+                    if '評価点' in p:
+                        del p['評価点']
+
+            # 最終出力用の辞書に結果を格納
+            final_output[title] = products
+        else:
+            final_output[title] = []  # 商品が取得できなかった場合は空のリストを格納
+
+        # 楽天APIへの負荷を考慮し、1秒間待機
+        time.sleep(1)
+
+    # 全てのリストを取得した後、整形されたJSON形式で標準出力に表示
+    print("\n" + "=" * 60)
+    print("すべての結果をJSON形式で出力します。")
+    print("=" * 60 + "\n")
+    print(json.dumps(final_output, indent=2, ensure_ascii=False))
+
+
+# Mypage関連のルートを登録
+def register_mypage_routes(app, Families, Users):
+    # 統一エラーレスポンス
+    def error_response(
+        code: str,
+        message: str,
+        http_status: int,
+        details: Optional[Union[dict, str]] = None
+    ):
+        payload = {"error": {"code": code, "message": message}}
+        if details is not None:
+            payload["error"]["details"] = details
+        return jsonify(payload), http_status
+
+    @app.get("/api/mypage/summary")
+    def get_mypage_summary():
+        """
+        指定ユーザーのサマリーを返す（表示用の取得API）。
+        クエリ: ?user_id=<int>（暫定。将来は認証でサーバ側特定に置換）
+        """
+        # 1) user_id の厳密検証（無効値は 400）
+        raw_user_id = request.args.get("user_id", default="1")
+        try:
+            user_id = int(raw_user_id)
+        except (ValueError, TypeError):
+            return error_response(
+                code="INVALID_USER_ID",
+                message="user_id must be an integer",
+                http_status=400,
+                details={"received": raw_user_id}
+            )
+
+        try:
+            # 2) ユーザー取得（無ければ 404）
+            user = Users.query.get(user_id)
+            if not user:
+                return error_response(
+                    code="USER_NOT_FOUND",
+                    message="user not found",
+                    http_status=404,
+                    details={"user_id": user_id}
+                )
+
+            # 3) 家族情報取得＆人数
+            family_id = user.family_id
+            adult_num = 0
+            child_num = 0
+            if family_id is not None:
+                family = Families.query.get(family_id)
+                if family:
+                    adult_num = family.adults or 0
+                    child_num = family.kids or 0
+
+            # 4) ユーザー名整形（姓 名）
+            lastname = (user.lastname or "").strip()
+            firstname = (user.firstname or "").strip()
+            name = f"{lastname} {firstname}".strip()
+
+            # 5) 正常レスポンス
+            return jsonify({
+                "name": name,
+                "user_id": user.id,
+                "family_id": user.family_id,
+                "adult_num": adult_num,
+                "child_num": child_num
+            }), 200
+
+        except SQLAlchemyError as e:
+            return error_response(
+                code="DB_ERROR",
+                message="database error",
+                http_status=500,
+                details=str(e)
+            )
+
+        except Exception as e:
+            return error_response(
+                code="INTERNAL_ERROR",
+                message="unexpected error",
+                http_status=500,
+                details=str(e)
+            )
+
+
+# ルート登録（定義後に呼び出し）
+register_mypage_routes(app, Families, Users)
 
 if __name__ == "__main__":
+    # ランキングデモは環境変数で明示的に有効化した時だけ実行
+    if os.getenv("RUN_RAKUTEN_DEMO") == "1":
+        run_ranking_demo()
+
     # 初回起動時にテーブル作成
     with app.app_context():
         db.create_all()
