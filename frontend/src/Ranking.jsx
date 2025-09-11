@@ -50,7 +50,7 @@ function Ranking() {
                     <div style={{display: 'flex'}}>
                     {sold_sortData.map(sold => (
                         <div key={sold.rank} className="overall" style={{width:'100px'}}>
-                                <div style={{borderRadius:'50em', border: 'solid .2em black', width:'80px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center',}}>
+                                <div style={{borderRadius:'50em', border: 'solid .2em black', width:'80px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center'}}>
                                     <span>{sold.goods_name || sold.foods_name}</span>
                                 </div>
                             <div className="item-card add-item-card"><span>+</span></div>
@@ -64,9 +64,11 @@ function Ranking() {
                 <h2 class="category-title">新着</h2>
                     <div style={{display: 'flex'}}>
                     {new_sortData.map(latest => (
-                        <div key={latest.rank} className="overall" style={{width:'80px'}}>
-                            <div style={{borderRadius:'50em', border: 'solid .2em black'}}><span>{latest.goods_name || latest.foods_name}</span></div>
-                            <div className="item-card add-item-card"><span>+</span></div>
+                        <div key={latest.rank} className="overall" style={{width:'100px'}}>
+                                <div style={{borderRadius:'50em', border: 'solid .2em black', width:'80px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center'}}>
+                                    <span>{latest.goods_name || latest.foods_name}</span>
+                                </div>
+                                <div className="item-card add-item-card"><span>+</span></div>
                             <p>{latest.rank}位</p>
                         </div>
                     ))}
