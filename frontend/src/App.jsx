@@ -6,6 +6,7 @@ import TopPage from './TopPage';
 import RegisterPage from './RegisterPage';
 import Recommend from './Recommend';
 import Overview from './Overview';
+import Ranking from './Ranking';
 import camera from './assets/camera.svg';
 import home from './assets/home.svg';
 import calendar from './assets/calendar.svg';
@@ -25,6 +26,7 @@ function App() {
         <Route path='mypage' element={<MyPage />} />
         <Route path='register' element={<RegisterPage />} />
         <Route path='recommend' element={<Recommend />} />
+        <Route path='ranking' element={<Ranking />} />
       </Routes>
       {
         location.pathname !== '/register' &&
