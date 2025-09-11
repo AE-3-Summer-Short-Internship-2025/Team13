@@ -86,10 +86,14 @@ def check_expire(expiry_date, item_name):
         return None
 
 
-@app.route("/")
-def index():
-    items = Items.query.all()
-    return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity,             "item_url": item.smallImageUrls} for item in items])
+@app.route("/db_check")
+def db_check():
+    try:
+        result = db.session.execute("SELECT NOW();").scalar()
+        return jsonify({"message": "データベース接続成功！", "now": str(result)})
+    except Exception as e:
+        return jsonify({"error": "データベース接続失敗", "details": str(e)}), 500
+
 
 class ItemSchema(Schema):
     item_code = fields.Str(required=True, validate=lambda x: len(x.strip()) > 0)
@@ -127,7 +131,9 @@ def fetch_and_add_item():
         params = {
             'applicationId': APP_ID,
             'format': 'json',
-            'keyword': item_code
+            # 'keyword': item_code
+            # 'keyword': item_code
+            'keyword': 10000953
         }
 
         res = requests.get(REQUEST_URL, params=params)
