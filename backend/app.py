@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 import requests
 import pandas as pd
 import re
+from marshmallow import Schema, fields, ValidationError
 # from rankpage import fetch_rakuten_products
 
 # .env 読み込み
@@ -90,21 +91,29 @@ def index():
     items = Items.query.all()
     return jsonify([{"id": item.id, "item_name": item.item_name, "quantity": item.quantity,             "item_url": item.smallImageUrls} for item in items])
 
+class ItemSchema(Schema):
+    item_code = fields.Str(required=True, validate=lambda x: len(x.strip()) > 0)
 
 @app.route("/api/items")
 def get_items():
-    items = Items.query.all()
-    return jsonify([
-        {
-            "id": i.id,
-            "name": i.item_name,
-            "quantity": i.quantity,
-            "smallImageUrls": i.smallImageUrls 
-        } for i in items
-    ])
+    try:
+        items = Items.query.all()
+        return jsonify([
+            {
+                "id": i.id,
+                "name": i.item_name,
+                "quantity": i.quantity,
+                "smallImageUrls": i.smallImageUrls,
+                "date_expiry": i.date_expiry.isoformat() if i.date_expiry else None
+            } for i in items
+        ])
+    except Exception as e:
+        app.logger.error(f"Error fetching items: {str(e)}")
+        return jsonify({"error": "データの取得に失敗しました"}), 500
     
 @app.route("/api/fetch_and_add_item", methods=['POST'])
 def fetch_and_add_item():
+    schema = ItemSchema()
     try:
         # フロントから item_code を受け取る
         data = request.get_json()
@@ -168,25 +177,30 @@ def fetch_and_add_item():
         #         expiry = None
 
         # DBに追加
-        new_item = Items(
-            owner_id=1,
-            item_name=item['itemName'],
-            quantity=1,
-            smallImageUrls=item['smallImageUrl'],
-            # date_expiry=expiry,
-            date_added=datetime.now(),
-            is_grocery=True
+        # トランザクション処理の改善
+        with db.session.begin():
+            new_item = Items(
+                item_name=item['itemName'][:100],  # 長さ制限
+                quantity=1,
+                smallImageUrls=item['smallImageUrl'][:255],  # 長さ制限
+                date_added=datetime.now(),
+                is_grocery=True
+            )
+            db.session.add(new_item)
+            # commitは自動的に行われる
+
+            
+        return create_response(
+            data={"id": new_item.id}, 
+            message="商品を追加しました"
         )
-
-        db.session.add(new_item)
-        db.session.commit()
-
-        return jsonify({"message": "Item added", "id": new_item.id})
-
-    #エラーが出た時の処理
+        
+    except requests.RequestException as e:
+        app.logger.error(f"楽天API Error: {str(e)}")
+        return create_response(error="商品情報の取得に失敗しました", status_code=500)
     except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        app.logger.error(f"Database Error: {str(e)}")
+        return create_response(error="データベースエラーが発生しました", status_code=500)
 
 # @app.route("/api/ranking", methods=["POST"])
 # def get_ranking():
@@ -205,6 +219,17 @@ def fetch_and_add_item():
 #     # DataFrameをJSON形式に変換
 #     result = df.to_dict(orient="records")
 #     return jsonify(result)
+def create_response(data=None, message=None, error=None, status_code=200):
+    response = {}
+    if data is not None:
+        response['data'] = data
+    if message:
+        response['message'] = message
+    if error:
+        response['error'] = error
+    return jsonify(response), status_code
+
+# 使用例
 
 
 
