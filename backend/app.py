@@ -129,6 +129,7 @@ def fetch_and_add_item():
         items = [item['Item'] for item in result['Items']]
         df = pd.DataFrame(items)
 
+        # 画像URLをカンマ区切りの文字列に変換
         df['smallImageUrl'] = df['smallImageUrls'].apply(
             lambda x: ','.join([d['imageUrl'] for d in x]) if isinstance(x, list) else None
         )
@@ -165,6 +166,7 @@ def fetch_and_add_item():
         #     except:
         #         expiry = None
 
+        # DBに追加
         new_item = Items(
             owner_id=1,
             item_name=item['itemName'],
@@ -180,6 +182,7 @@ def fetch_and_add_item():
 
         return jsonify({"message": "Item added", "id": new_item.id})
 
+    #エラーが出た時の処理
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
