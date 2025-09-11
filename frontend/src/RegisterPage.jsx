@@ -26,7 +26,7 @@ export default function RegisterPage() {
     setIsCameraOn(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: { exact: '6afd40a1b64b5dd23605e068b56623520079d8a28fa398a5f0f3f665eed65a10' } }
+        video: true
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;

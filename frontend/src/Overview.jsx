@@ -40,7 +40,7 @@ function TopPage() {
               return (
                 <tbody key={item.id}>
                   <tr>
-                    <td style={{ border: '1px solid #8C8989', padding: '.5em' , textAlign: 'center'}}>{item.quantity}</td>
+                    <td style={{ border: '1px solid #8C8989', padding: '.5em', textAlign: 'center' }}>{item.quantity}</td>
                     <td style={{ border: '1px solid #8C8989', padding: '.5em' }}>{item.name}</td>
                   </tr>
                 </tbody>
@@ -53,10 +53,10 @@ function TopPage() {
       <ul>
         {items.map(item => (
           <li key={item.id}>
-          {item.name} ({item.quantity})
-          <img src={item.smallImageUrls} alt="商品画像" />
-        </li>
-        
+            {item.name} ({item.quantity})
+            <img src={item.smallImageUrls} alt="商品画像" />
+          </li>
+
         ))}
       </ul>
     </div >
