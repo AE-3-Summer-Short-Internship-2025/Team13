@@ -87,7 +87,6 @@ def check_expire(expiry_date, item_name):
         return None
 
 
-
 @app.route("/db_check")
 def db_check():
     try:
@@ -98,7 +97,9 @@ def db_check():
 
 
 class ItemSchema(Schema):
-    item_code = fields.Str(required=True, validate=lambda x: len(x.strip()) > 0)
+    item_code = fields.Str(
+        required=True, validate=lambda x: len(x.strip()) > 0)
+
 
 @app.route("/api/items")
 def get_items():
@@ -116,10 +117,10 @@ def get_items():
     except Exception as e:
         app.logger.error(f"Error fetching items: {str(e)}")
         return jsonify({"error": "データの取得に失敗しました"}), 500
-    
+
+
 @app.route("/api/fetch_and_add_item", methods=['POST'])
 def fetch_and_add_item():
-    schema = ItemSchema()
     try:
         # フロントから item_code を受け取る
         data = request.get_json()
@@ -133,10 +134,7 @@ def fetch_and_add_item():
         params = {
             'applicationId': APP_ID,
             'format': 'json',
-            # 'keyword': item_code
-            # 'keyword': item_code
-            'keyword': 10000953
-            # 'keyword': f'JAN {item_code'
+            'keyword': f'JAN {item_code}'
         }
 
         res = requests.get(REQUEST_URL, params=params)
@@ -150,7 +148,8 @@ def fetch_and_add_item():
 
         # 画像URLをカンマ区切りの文字列に変換
         df['smallImageUrl'] = df['smallImageUrls'].apply(
-            lambda x: ','.join([d['imageUrl'] for d in x]) if isinstance(x, list) else None
+            lambda x: ','.join([d['imageUrl']
+                               for d in x]) if isinstance(x, list) else None
         )
 
         # def extract_expiry(text):
@@ -198,12 +197,11 @@ def fetch_and_add_item():
             db.session.add(new_item)
             # commitは自動的に行われる
 
-            
         return create_response(
-            data={"id": new_item.id}, 
+            data={"id": new_item.id},
             message="商品を追加しました"
         )
-        
+
     except requests.RequestException as e:
         app.logger.error(f"楽天API Error: {str(e)}")
         return create_response(error="商品情報の取得に失敗しました", status_code=500)
@@ -228,6 +226,8 @@ def fetch_and_add_item():
 #     # DataFrameをJSON形式に変換
 #     result = df.to_dict(orient="records")
 #     return jsonify(result)
+
+
 def create_response(data=None, message=None, error=None, status_code=200):
     response = {}
     if data is not None:
@@ -239,7 +239,6 @@ def create_response(data=None, message=None, error=None, status_code=200):
     return jsonify(response), status_code
 
 # 使用例
-
 
 
 if __name__ == "__main__":
