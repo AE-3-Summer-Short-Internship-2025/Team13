@@ -106,8 +106,22 @@ export default function RegisterPage() {
   };
   const submit = async () => {
     // implement POST to flask
-
     try {
+      if (!barcodeData) {
+        throw new Error('There was no barcode data');
+      } else {
+        const response = await fetch("http://54.64.250.189:5000/api/fetch_and_add_item", {
+          method: 'POST',
+          headers: {
+            "Content-Type": 'application/json'
+          },
+          body: JSON.stringify({ itemCode: barcodeData })
+        });
+
+        if (!response.ok) {
+          throw new Error('There was a problem sending data to the server');
+        }
+      }
       console.log(data);
       navigate('/overview');
     } catch (error) {
@@ -158,7 +172,7 @@ export default function RegisterPage() {
           <video ref={videoRef} style={{ width: '100%', maxWidth: '500px', border: 'none', borderRadius: '1em' }} />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
           <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
-            <img src={back} style={{ position: 'absolute', left: 0 }} onClick={stopCamera}/>
+            <img src={back} style={{ position: 'absolute', left: 0 }} onClick={stopCamera} />
             <div onClick={handleCapture} style={{ backgroundColor: 'white', height: '2em', width: '2em', border: '.5em solid #50B4AA', borderRadius: '100px' }}></div>
           </div>
         </div>
