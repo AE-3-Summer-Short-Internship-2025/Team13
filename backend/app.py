@@ -1,19 +1,19 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 from dotenv import load_dotenv
-import os
 from datetime import datetime, timedelta, date
 from flask_cors import CORS
-from flask_migrate import Migrate
-import requests
-import pandas as pd
 from marshmallow import Schema, fields
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from typing import Optional, Union
+from flask_migrate import Migrate
+import requests
+import pandas as pd
 import json
 import time
+import os
 
 # .env 読み込み
 env_path = Path(__file__).parent / ".env"
@@ -195,6 +195,17 @@ def fetch_and_add_item():
     except Exception as e:
         app.logger.exception("Database Error")
         return create_response(error="データベースエラーが発生しました", status_code=500)
+    
+    
+    
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    build_dir = os.path.join(os.path.dirname(__file__), 'build')
+    if path != "" and os.path.exists(os.path.join(build_dir, path)):
+        return send_from_directory(build_dir, path)
+    else:
+        return send_from_directory(build_dir, 'index.html')
 
 
 # ランキングページの処理
