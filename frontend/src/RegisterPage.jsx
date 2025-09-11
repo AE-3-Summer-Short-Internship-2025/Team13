@@ -115,11 +115,13 @@ export default function RegisterPage() {
           headers: {
             "Content-Type": 'application/json'
           },
-          body: JSON.stringify({ itemCode: barcodeData })
+          body: JSON.stringify({ item_code: barcodeData })
         });
 
         if (!response.ok) {
           throw new Error('There was a problem sending data to the server');
+        } else {
+          console.log('Sucessfully sent the code');
         }
       }
       console.log(data);
@@ -162,7 +164,7 @@ export default function RegisterPage() {
             {editMemo && <input type="text" value={data.note} name='note' onChange={handleChange} style={{ borderRadius: '100px', border: 'none', padding: '.5em' }} />}
             <img src={editMemo ? save : edit} alt="edit and save logo" style={{ justifySelf: 'end' }} onClick={() => setEditMemo(prev => !prev)} />
           </div>
-          <div style={{paddingTop: '1em' }}>
+          <div style={{ paddingTop: '1em' }}>
             <button type="button" onClick={submit} style={{ backgroundColor: '#50B4AA', border: 'none', color: 'white', fontSize: '2em', fontFamily: 'Zen Maru Gothic', borderRadius: '.25em' }}>確認</button>
           </div>
         </>}
