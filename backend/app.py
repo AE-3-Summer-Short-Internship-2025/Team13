@@ -10,6 +10,7 @@ import requests
 import pandas as pd
 import re
 from marshmallow import Schema, fields, ValidationError
+from sqlalchemy import text
 # from rankpage import fetch_rakuten_products
 
 # .env 読み込み
@@ -86,13 +87,14 @@ def check_expire(expiry_date, item_name):
         return None
 
 
+
 @app.route("/db_check")
 def db_check():
     try:
-        result = db.session.execute("SELECT NOW();").scalar()
-        return jsonify({"message": "データベース接続成功！", "now": str(result)})
+        result = db.session.execute(text("SELECT NOW();")).scalar()
+        return jsonify({"message": "✅ データベース接続成功！", "now": str(result)})
     except Exception as e:
-        return jsonify({"error": "データベース接続失敗", "details": str(e)}), 500
+        return jsonify({"error": "❌ データベース接続失敗", "details": str(e)}), 500
 
 
 class ItemSchema(Schema):
