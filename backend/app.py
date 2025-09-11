@@ -9,7 +9,7 @@ from flask_migrate import Migrate
 import requests
 import pandas as pd
 import re
-from rankpage import fetch_rakuten_products
+# from rankpage import fetch_rakuten_products
 
 # .env 読み込み
 env_path = Path(__file__).parent / ".env"
@@ -189,23 +189,23 @@ def fetch_and_add_item():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/ranking", methods=["POST"])
-def get_ranking():
-    data = request.get_json()
-    keyword = data.get("keyword")
-    sort_key = data.get("sort")
+# @app.route("/api/ranking", methods=["POST"])
+# def get_ranking():
+#     data = request.get_json()
+#     keyword = data.get("keyword")
+#     sort_key = data.get("sort")
 
-    if not keyword or not sort_key:
-        return jsonify({"error": "キーワードとソート順が必要です"}), 400
+#     if not keyword or not sort_key:
+#         return jsonify({"error": "キーワードとソート順が必要です"}), 400
 
-    df = fetch_rakuten_products(keyword, sort_key)
+#     df = fetch_rakuten_products(keyword, sort_key)
 
-    if df is None or df.empty:
-        return jsonify({"error": "商品が見つかりませんでした"}), 404
+#     if df is None or df.empty:
+#         return jsonify({"error": "商品が見つかりませんでした"}), 404
 
-    # DataFrameをJSON形式に変換
-    result = df.to_dict(orient="records")
-    return jsonify(result)
+#     # DataFrameをJSON形式に変換
+#     result = df.to_dict(orient="records")
+#     return jsonify(result)
 
 
 

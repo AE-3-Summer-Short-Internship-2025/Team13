@@ -58,7 +58,7 @@ def fetch_rakuten_products(keyword, sort_key):
         return None
 
 # --- メインの処理 ---
-# if __name__ == "__main__":
+if __name__ == "__main__":
     print(f"キーワード「{SEARCH_KEYWORD}」の各種TOP10リストを取得します...\n")
     
     # 表示したいリストの種類を定義
