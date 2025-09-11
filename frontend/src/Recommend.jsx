@@ -1,7 +1,10 @@
-import { useState } from 'react';
-// import goods_icon from ''
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import crown from './assets/crown.svg';
+import ranking from './Ranking';
 
 function Recommend() {
+
+    const location = useLocation();
 
     const goodsData = [
     {goods_id: "1", goods_name: "カバン"},
@@ -56,7 +59,6 @@ function Recommend() {
                     <h3 class="section-title"><span class="icon error-icon">❗</span>期限切れの食品({expired_foodsData.length})</h3>
                 </div>
                 <div className="item-list-container" style={{display: 'flex'}}>
-                    {/* expiredFoodsData配列をmapで展開 */}
                     {expired_foodsData.map(food => (
                         <div key={food.foods_id} className="item-card">
                             <span>{food.foods_name}</span>
@@ -80,6 +82,10 @@ function Recommend() {
                 </div>
             </section>
         </main>
+        <div>
+            {location.pathname !== '/ranking' && 
+            <Link to={'/ranking'}><img src={crown} alt="crown icon" width={'50em'} /></Link>}
+        </div>
     </>
     );
 }
