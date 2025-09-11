@@ -3,17 +3,28 @@ import { useState, useEffect } from 'react';
 
 function Ranking() {
 
-    const [sold, set_soldItems] = useState([]);
+    const [items, setItems] = useState([]);
     useEffect(() => {
-        fetch("http://54.64.250.189:5000/api/items") // Flaskのエンドポイント
-            .then(res => res.json())
-            .then(data => set_soldItems(data));
+        async function getItems() {
+            const response = await fetch('http://54.64.250.189:5000/api/items');
+            if (response.ok) {
+                const data = await response.json();
+                setItems(data);
+                console.log(data);
+            } else {
+                console.log('There was a problem retrieving data');
+                console.log(response.text);
+            }
+        }
+        getItems();
     }, []);
 
-    console.log(sold);
+    const [sale, setSale] = useState(true);
+    const [latest, setLatest] = useState(true);
 
 
-    const sold_sortData = [
+
+    const sale_sortData = [
         { rank: "1", goods_id: "1", goods_name: "カバン" },
         { rank: "2", goods_id: "2", goods_name: "懐中電灯" },
         { rank: "3", goods_id: "3", goods_name: "水" },
@@ -41,6 +52,29 @@ function Ranking() {
         { rank: "4", foods_id: "3", foods_name: "水" }
     ];
 
+    const ItemList = ({condition, items}) => {
+        return (
+            condition && items.map(item => {
+                return (
+                        <div key={item.rank} className="overall" style={{width:'100px', overflowX: 'auto'}}>
+                                <div style={{borderRadius:'50em', border: 'solid .1em lightgrey', width:'70px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center'}}>
+                                    <span>{item.goods_name || item.foods_name}</span>
+                                </div>
+                            <div className="item-card add-item-card"><span>+</span></div>
+                            <p>{item.rank}位</p>
+                        </div>
+                );
+            })
+        );
+    };
+
+    let saleItems = [];
+    let latestItems = [];
+    if (items.length > 0) {
+        timeoutItems = items.filter(item => (new Date(item.date_expiry)) < (new Date()));
+        closeTimeoutItems = items.filter(item => (((new Date(item.date_expiry)) - new Date()) / (1000 * 60 * 60 * 24)) < 7);
+    }
+
     return (
         <>
 
@@ -57,16 +91,8 @@ function Ranking() {
 
             <section className="ranking-category">
                 <h3 className="category-title">売れ筋</h3>
-                    <div style={{display: 'flex'}}>
-                    {sold_sortData.map(sold => (
-                        <div key={sold.rank} className="overall" style={{width:'100px'}}>
-                                <div style={{borderRadius:'50em', border: 'solid .1em lightgrey', width:'70px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center'}}>
-                                    <span>{sold.goods_name || sold.foods_name}</span>
-                                </div>
-                            <div className="item-card add-item-card"><span>+</span></div>
-                            <p>{sold.rank}位</p>
-                        </div>
-                    ))}
+                    <div style={{display: 'flex', gap: '2em', overflowX: 'auto'}}>
+                        {/* <ItemList condition={sale} items={saleItems} /> */}
                     </div>
             </section>
 

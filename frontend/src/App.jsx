@@ -39,6 +39,18 @@ function App() {
           </div>
         )
       }
+
+      {/* かごページを作るならこれでかごのアイコンをページ下に作る */}
+      {/* {
+        (location.pathname == '/recommend' || location.pathname == '/ranking') &&
+        (
+          <div style={{ position: 'fixed', bottom: 0, left:'50%', transform: 'translateX(-50%) translateY(20%)', backgroundColor: '#ededed', padding: '2em', borderRadius: '100px'}}>
+            <Link to="/register">
+              <img src={cart} alt="cart icon" width='60px' />
+            </Link>
+          </div>
+        )
+      } */}
       <div style={{ pointerEvents: menu ? 'none' : 'auto', opacity: menu ? 0 : '100%', transform: menu ? 'translateY(1em)' : '', position: 'fixed', right: 0, bottom: '6em', display: 'flex', flexDirection: 'column', gap: '1em', backgroundColor: '#ededed', padding: '1em .5em', marginRight: '1.25em', borderRadius: '.5em', transitionProperty: 'all', transitionDuration: '300ms' }}>
         <Link to={'/'}>
           <img src={home} alt="home icon" />
