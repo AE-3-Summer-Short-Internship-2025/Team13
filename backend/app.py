@@ -218,8 +218,8 @@ def serve_react(path):
 SEARCH_KEYWORD = '防災'
 
 
-@app.route('/api/item_ranking', methods=['GET'])
 # keyword, sort_key
+@app.route('/api/item_ranking', methods=['GET', 'POST'])
 def fetch_rakuten_products():
     """
     指定されたキーワードとソート順で楽天の商品を検索し、辞書のリストとして返す関数
