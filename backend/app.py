@@ -245,7 +245,7 @@ def fetch_rakuten_products():
 
         if not result.get('Items'):
             print(f"「{keyword}」に関する商品が見つかりませんでした。(ソート: {sort_key})")
-            return None
+            return {}
 
         # pandasを使わずに必要な情報だけを抽出し、日本語キーを持つ辞書のリストを作成
         items_data = []
@@ -265,11 +265,10 @@ def fetch_rakuten_products():
         try:
             error_details = e.response.json()  # type: ignore[attr-defined]
         except (ValueError, AttributeError):
-            pass  # JSONデコードに失敗した場合は何もしない
+            return {}
         print(f"通信エラーが発生しました (ソート: {sort_key}): {e}")
         if error_details:
             print(f"サーバーからのエラー詳細: {error_details}")
-        return None
 
 
 def run_ranking_demo():
