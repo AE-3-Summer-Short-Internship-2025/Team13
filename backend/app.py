@@ -168,8 +168,7 @@ def fetch_and_add_item():
 
         # 画像URLをカンマ区切りの文字列に変換
         df['smallImageUrl'] = df['smallImageUrls'].apply(
-            lambda x: ','.join([d.get('imageUrl', '')
-                               for d in x]) if isinstance(x, list) else None
+            lambda x: ','.join([d.get('imageUrl', '')for d in x]) if isinstance(x, list) else None
         )
 
         # 最初の1件だけ使う
@@ -248,13 +247,16 @@ def fetch_rakuten_products():
 
         # pandasを使わずに必要な情報だけを抽出し、日本語キーを持つ辞書のリストを作成
         items_data = []
+        # 画像URLをカンマ区切りの文字列に変換
+
         for item in result['Items']:
             item_info = item['Item']
             items_data.append({
                 '商品名': item_info.get('itemName'),
                 '価格': item_info.get('itemPrice'),
                 'ショップ名': item_info.get('shopName'),
-                '評価点': item_info.get('reviewAverage')
+                '評価点': item_info.get('reviewAverage'),
+                '画像': item_info.get('smallImageUrls: i.smallImageUrls')
             })
         return jsonify(items_data)
 
