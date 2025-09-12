@@ -249,14 +249,28 @@ def fetch_rakuten_products():
         items_data = []
         # 画像URLをカンマ区切りの文字列に変換
 
+        # for item in result['Items']:
+        #     item_info = item['Item']
+        #     items_data.append({
+        #         '商品名': item_info.get('itemName'),
+        #         '価格': item_info.get('itemPrice'),
+        #         'ショップ名': item_info.get('shopName'),
+        #         '評価点': item_info.get('reviewAverage'),
+        #         '画像': [img['imageUrl'] for img in item_info.get('smallImageUrls', [])]
+        #     })
         for item in result['Items']:
             item_info = item['Item']
+            # smallImageUrls が空でなければ最初の画像を取得、なければ None
+            image_url = None
+            if item_info.get('smallImageUrls'):
+                image_url = item_info['smallImageUrls'][0].get('imageUrl')
+
             items_data.append({
                 '商品名': item_info.get('itemName'),
                 '価格': item_info.get('itemPrice'),
                 'ショップ名': item_info.get('shopName'),
                 '評価点': item_info.get('reviewAverage'),
-                '画像': [img['imageUrl'] for img in item_info.get('smallImageUrls', [])]
+                '画像': item_info.get('smallImageUrls')
             })
         return jsonify(items_data)
 
