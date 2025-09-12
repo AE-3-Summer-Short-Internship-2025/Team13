@@ -60,7 +60,6 @@ function Ranking() {
                                 <div style={{borderRadius:'50em', border: 'solid .1em lightgrey', width:'70px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center'}}>
                                     <span>{item.goods_name || item.foods_name}</span>
                                 </div>
-                            <div className="item-card add-item-card"><span>+</span></div>
                             <p>{item.rank}位</p>
                         </div>
                 );
@@ -80,9 +79,8 @@ function Ranking() {
 
             <div className="ranking-page">
                 <header className="app-header">
-                    <div className="search-container" style={{ display: 'flex', justifyContent: 'center' }}>
-                        <input type="search" className="search-box" style={{width:'200px'}}></input>
-                        <i className="search-icon">🔍</i>
+                    <div className="search-container" style={{ display: 'flex',justifyContent: 'center' }}>
+                        <input type="search" className="search-box" style={{width:'200px', height:'30px'}}></input>
                     </div>
                 </header>
 
@@ -104,7 +102,6 @@ function Ranking() {
                                 <div style={{borderRadius:'50em', border: 'solid .1em lightgrey', width:'70px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center'}}>
                                     <span>{latest.goods_name || latest.foods_name}</span>
                                 </div>
-                                <div className="item-card add-item-card"><span>+</span></div>
                             <p>{latest.rank}位</p>
                         </div>
                     ))}
@@ -119,7 +116,6 @@ function Ranking() {
                                 <div style={{borderRadius:'50em', border: 'solid .1em lightgrey', width:'70px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center',}}>
                                     <span>{good.goods_name || good.foods_name}</span>
                                 </div>
-                            <div className="item-card add-item-card"><span>+</span></div>
                             <p>{good.rank}位</p>
                         </div>
                     ))}
@@ -134,7 +130,6 @@ function Ranking() {
                                 <div style={{borderRadius:'50em', border: 'solid .1em lightgrey', width:'70px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center',}}>
                                     <span>{cheap.goods_name || cheap.foods_name}</span>
                                 </div>
-                            <div className="item-card add-item-card"><span>+</span></div>
                             <p>{cheap.rank}位</p>
                         </div>
                     ))}
