@@ -271,7 +271,8 @@ def fetch_rakuten_products():
                 'ショップ名': item_info.get('shopName'),
                 '評価点': item_info.get('reviewAverage'),
                 '画像': item_info.get('smallImageUrls'),
-                'itemURL': item_info.get('itemUrl')
+                'itemURL': item_info.get('itemUrl'),
+                'reviewCount': item_info.get('reviewCount')
             })
         return jsonify(items_data)
 
