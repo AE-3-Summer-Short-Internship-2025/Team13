@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request,send_from_directory
+from flask import Flask, jsonify, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 from dotenv import load_dotenv
@@ -46,7 +46,8 @@ def create_response(
     if data is not None:
         payload["data"] = data
     if error is not None:
-        payload["error"] = error if isinstance(error, dict) else {"message": str(error)}
+        payload["error"] = error if isinstance(error, dict) else {
+            "message": str(error)}
     return jsonify(payload), status_code
 
 
@@ -115,7 +116,8 @@ def db_check():
 
 
 class ItemSchema(Schema):
-    item_code = fields.Str(required=True, validate=lambda x: len(x.strip()) > 0)
+    item_code = fields.Str(
+        required=True, validate=lambda x: len(x.strip()) > 0)
 
 
 @app.route("/api/items")
@@ -166,7 +168,8 @@ def fetch_and_add_item():
 
         # 画像URLをカンマ区切りの文字列に変換
         df['smallImageUrl'] = df['smallImageUrls'].apply(
-            lambda x: ','.join([d.get('imageUrl', '') for d in x]) if isinstance(x, list) else None
+            lambda x: ','.join([d.get('imageUrl', '')
+                               for d in x]) if isinstance(x, list) else None
         )
 
         # 最初の1件だけ使う
@@ -174,7 +177,8 @@ def fetch_and_add_item():
 
         # DBに追加
         with db.session.begin():
-            small_img = item['smallImageUrl'] if pd.notna(item['smallImageUrl']) else ''
+            small_img = item['smallImageUrl'] if pd.notna(
+                item['smallImageUrl']) else ''
             new_item = Items(
                 item_name=str(item['itemName'])[:100],        # 長さ制限
                 quantity=1,
@@ -195,9 +199,8 @@ def fetch_and_add_item():
     except Exception as e:
         app.logger.exception("Database Error")
         return create_response(error="データベースエラーが発生しました", status_code=500)
-    
-    
-    
+
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_react(path):
@@ -214,7 +217,10 @@ def serve_react(path):
 # 検索キーワード
 SEARCH_KEYWORD = '防災'
 
-def fetch_rakuten_products(keyword, sort_key):
+
+@app.route('/api/item_ranking', methods=['GET'])
+# keyword, sort_key
+def fetch_rakuten_products():
     """
     指定されたキーワードとソート順で楽天の商品を検索し、辞書のリストとして返す関数
     """
@@ -222,6 +228,9 @@ def fetch_rakuten_products(keyword, sort_key):
     APP_ID = '1088027222225008171'
     # 20220601バージョンを使用
     SEARCH_URL = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601'
+    data = request.get_json(silent=True) or {}
+    keyword = data.get('keyword')
+    sort_key = data.get('sort_key')
     params = {
         'applicationId': APP_ID,
         'format': 'json',
@@ -281,7 +290,8 @@ def run_ranking_demo():
     for title, sort_param in lists_to_show.items():
         print(f"--- {title} を取得中 ---")
 
-        products = fetch_rakuten_products(keyword=SEARCH_KEYWORD, sort_key=sort_param)
+        products = fetch_rakuten_products(
+            keyword=SEARCH_KEYWORD, sort_key=sort_param)
 
         if products is not None:
             # 新着順と価格順の場合は「評価点」キーを削除
