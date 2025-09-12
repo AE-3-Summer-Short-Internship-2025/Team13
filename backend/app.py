@@ -244,8 +244,7 @@ def fetch_rakuten_products():
         result = res.json()
 
         if not result.get('Items'):
-            print(f"「{keyword}」に関する商品が見つかりませんでした。(ソート: {sort_key})")
-            return {}
+            return jsonify({'error': f"「{keyword}」に関する商品が見つかりませんでした。(ソート: {sort_key})"}), 400
 
         # pandasを使わずに必要な情報だけを抽出し、日本語キーを持つ辞書のリストを作成
         items_data = []
@@ -257,7 +256,7 @@ def fetch_rakuten_products():
                 'ショップ名': item_info.get('shopName'),
                 '評価点': item_info.get('reviewAverage')
             })
-        return items_data
+        return jsonify(items_data)
 
     except requests.exceptions.RequestException as e:
         # エラーの詳細（JSONレスポンス）を表示するように改良
@@ -265,10 +264,15 @@ def fetch_rakuten_products():
         try:
             error_details = e.response.json()  # type: ignore[attr-defined]
         except (ValueError, AttributeError):
-            return {}
+            return jsonify({
+                'error': 'HTTP Error from Rakuten API',
+                'status_code': e.response.status_code,
+                'details': error_details
+            }), e.response.status_code
         print(f"通信エラーが発生しました (ソート: {sort_key}): {e}")
         if error_details:
             print(f"サーバーからのエラー詳細: {error_details}")
+            return jsonify({'error': 'Communication Error', 'details': str(e)}), 500
 
 
 def run_ranking_demo():
