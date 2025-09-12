@@ -270,7 +270,8 @@ def fetch_rakuten_products():
                 '価格': item_info.get('itemPrice'),
                 'ショップ名': item_info.get('shopName'),
                 '評価点': item_info.get('reviewAverage'),
-                '画像': item_info.get('smallImageUrls')
+                '画像': item_info.get('smallImageUrls'),
+                'itemURL': item_info.get('itemUrl')
             })
         return jsonify(items_data)
 
