@@ -1,5 +1,6 @@
 # 楽天 Rakuten Team13🔴
 
+![App Banner](banner.png)
 > This is the app for managing your emergency food and other supplies. Fully integrated with Rakuten API.
 
 ## チームメンバー
