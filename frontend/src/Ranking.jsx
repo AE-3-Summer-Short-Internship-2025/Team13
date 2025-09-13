@@ -63,6 +63,7 @@ function Ranking() {
         return (
             items.slice(1, 4).map(item => {
                 return (
+<<<<<<< HEAD
                     <div key={item.商品名} className="overall">
                         <a href={item.itemURL} target='_blank'>
                             <img src={item.画像[0].imageUrl} alt="goods' thumbnail" style={{ width: '6em', borderRadius: '2em' }} />
@@ -70,6 +71,13 @@ function Ranking() {
                         <div style={{ borderRadius: '50em', border: 'solid .1em lightgrey', aspectRatio: '1' }}>
                             {/* <span>{item.商品名 || item.foods_name}</span> */}
                             <p>{item.商品名.substring(0, 20)}...</p>
+=======
+                        <div key={item.rank} className="overall" style={{width:'100px', overflowX: 'auto'}}>
+                                <div style={{borderRadius:'50em', border: 'solid .1em lightgrey', width:'70px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center'}}>
+                                    <span>{item.goods_name || item.foods_name}</span>
+                                </div>
+                            <p>{item.rank}位</p>
+>>>>>>> 025e75b09b81bf1d393730860b1760dc9d987304
                         </div>
                         <div className="item-card add-item-card"><span>+</span></div>
                         {/* <p>{item.評価点}位</p> */}
@@ -91,19 +99,43 @@ function Ranking() {
 
             <div className="ranking-page">
                 <header className="app-header">
+<<<<<<< HEAD
                     <div className="search-container" style={{ display: 'flex', justifyContent: 'center' }}>
                         <input type="search" className="search-box" style={{ width: '200px' }}></input>
                         <i className="search-icon">🔍</i>
+=======
+                    <div className="search-container" style={{ display: 'flex',justifyContent: 'center' }}>
+                        <input type="search" className="search-box" style={{width:'200px', height:'30px'}}></input>
+>>>>>>> 025e75b09b81bf1d393730860b1760dc9d987304
                     </div>
                 </header>
 
                 <main className="main-content">
                     <h1 className="page-title">人気な商品</h1>
 
+<<<<<<< HEAD
                     <section className="ranking-category">
                         <h3 className="category-title">売れ筋</h3>
                         <div style={{ display: 'flex', gap: '1em', overflowX: 'auto', width: '350px' }}>
                             <ItemList items={bestSeller} />
+=======
+            <section className="ranking-category">
+                <h3 className="category-title">売れ筋</h3>
+                    <div style={{display: 'flex', gap: '2em', overflowX: 'auto'}}>
+                        {/* <ItemList condition={sale} items={saleItems} /> */}
+                    </div>
+            </section>
+
+            <section className="ranking-category">
+                <h3 className="category-title">新着</h3>
+                    <div style={{display: 'flex'}}>
+                    {new_sortData.map(latest => (
+                        <div key={latest.rank} className="overall" style={{width:'100px'}}>
+                                <div style={{borderRadius:'50em', border: 'solid .1em lightgrey', width:'70px', aspectRatio:'1', alignItems:'center',   display: 'flex', justifyContent: 'center'}}>
+                                    <span>{latest.goods_name || latest.foods_name}</span>
+                                </div>
+                            <p>{latest.rank}位</p>
+>>>>>>> 025e75b09b81bf1d393730860b1760dc9d987304
                         </div>
                     </section>
 
@@ -118,7 +150,11 @@ function Ranking() {
                                     <div className="item-card add-item-card"><span>+</span></div>
                                     <p>{latest.rank}位</p>
                                 </div>
+<<<<<<< HEAD
                             ))}
+=======
+                            <p>{good.rank}位</p>
+>>>>>>> 025e75b09b81bf1d393730860b1760dc9d987304
                         </div>
                     </section> */}
 
@@ -133,7 +169,11 @@ function Ranking() {
                                     <div className="item-card add-item-card"><span>+</span></div>
                                     <p>{good.rank}位</p>
                                 </div>
+<<<<<<< HEAD
                             ))}
+=======
+                            <p>{cheap.rank}位</p>
+>>>>>>> 025e75b09b81bf1d393730860b1760dc9d987304
                         </div>
                     </section> */}
 
