@@ -8,12 +8,27 @@ function TopPage() {
   useEffect(() => {
     fetch("http://54.64.250.189:5000/api/items") // Flaskのエンドポイント
       .then(res => res.json())
-      .then(data => setItems(data));
+      .then(data => {
+        setItems(data);
+        console.log(data);
+      });
   }, []);
 
   const handleToggle = (bool) => {
     setIsFood(bool);
   };
+
+  let timeoutItems = [];
+  let closeTimeoutItems = [];
+  let food = [];
+  if (items.length > 0) {
+    const daysLeft = dateStr => {
+      
+    }
+    timeoutItems = items.filter(item => (new Date(item.date_expiry)) < (new Date()));
+    closeTimeoutItems = items.filter(item => (((new Date(item.date_expiry)) - new Date()) / (1000 * 60 * 60 * 24)) <= 7);
+    food = items.filter(item => ((((new Date(item.date_expiry)) - new Date()) / (1000 * 60 * 60 * 24)) > 7));
+  }
 
   return (
     <div>
@@ -32,16 +47,21 @@ function TopPage() {
           <table style={{ borderCollapse: 'collapse' }} className='text-gray'>
             <thead>
               <tr>
+                <th style={{ border: '1px solid #8C8989', padding: '1em' }}>残り日数</th>
+                <th style={{ border: '1px solid #8C8989', padding: '1em' }}>賞味期限</th>
                 <th style={{ border: '1px solid #8C8989', padding: '1em' }}>個数</th>
-                <th style={{ border: '1px solid #8C8989' }}>防災グッズ</th>
+                <th style={{ border: '1px solid #8C8989', padding: '1em' }}>食料品</th>
+                {/* <th style={{ border: '1px solid #8C8989' }}>防災グッズ</th> */}
               </tr>
             </thead>
-            {items.map(item => {
+            {items.map(food => {
               return (
-                <tbody key={item.id}>
+                <tbody key={food.id}>
                   <tr>
-                    <td style={{ border: '1px solid #8C8989', padding: '.5em', textAlign: 'center' }}>{item.quantity}</td>
-                    <td style={{ border: '1px solid #8C8989', padding: '.5em' }}>{item.name}</td>
+                    <td style={{ border: '1px solid #8C8989', padding: '.5em' }}>{Math.floor(((new Date(food.date_expiry)) - new Date())/(1000*60*60*24))}</td>
+                    <td style={{ border: '1px solid #8C8989', padding: '.5em' }}>{food.date_expiry && food.date_expiry.substring(0, 10)}</td>
+                    <td style={{ border: '1px solid #8C8989', padding: '.5em', textAlign: 'center' }}>{food.quantity}</td>
+                    <td style={{ border: '1px solid #8C8989', padding: '.5em' }}>{food.name}</td>
                   </tr>
                 </tbody>
               );

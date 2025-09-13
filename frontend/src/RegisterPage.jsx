@@ -44,6 +44,7 @@ export default function RegisterPage() {
       videoRef.current.srcObject.getTracks().forEach(track => track.stop());
       videoRef.current.srcObject = null;
       setIsCameraOn(false);
+      setBarcodeData(9784478116982)
     }
   };
 
@@ -174,7 +175,7 @@ export default function RegisterPage() {
           <canvas ref={canvasRef} style={{ display: 'none' }} />
           <div style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
             <img src={back} style={{ position: 'absolute', left: 0 }} onClick={stopCamera} />
-            <div onClick={handleCapture} style={{ backgroundColor: 'white', height: '2em', width: '2em', border: '.5em solid #50B4AA', borderRadius: '100px' }}></div>
+            <div onClick={stopCamera} style={{ backgroundColor: 'white', height: '2em', width: '2em', border: '.5em solid #50B4AA', borderRadius: '100px' }}></div>
           </div>
         </div>
       )}
